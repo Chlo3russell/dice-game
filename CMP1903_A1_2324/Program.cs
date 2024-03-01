@@ -10,11 +10,10 @@ namespace CMP1903_A1_2324
     {
         static void Main(string[] args)
         {
-            // Creating an instance of the class Game
-            Game newGame = new Game();
-            // Using the method DiceRolling to roll the "dice"
-            newGame.DiceRolling();
-
+            /*
+             * Create a Game object and call its methods.
+             * Create a Testing object to verify the output and operation of the other classes.
+             */
         }
     }
 }
