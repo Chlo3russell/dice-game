@@ -10,10 +10,19 @@ namespace CMP1903_A1_2324
     {
         static void Main(string[] args)
         {
-            /*
-             * Create a Game object and call its methods.
-             * Create a Testing object to verify the output and operation of the other classes.
-             */
+            // Creating an instance of the class Game
+            Game newGame = new Game();
+            // Using the method DiceRolling to roll the "dice"
+            newGame.DiceRolling();
+            // Using the method KeepRolling to create a continuous rolling loop
+            newGame.KeepRolling();
+            // Tells you how many of each no was rolled
+            newGame.DisplayAmounts();
+
+            // Testing the two classes Game and Die
+            Testing test1 = new Testing();
+            test1.DieTesting();
+            test1.GameTesting();
         }
     }
 }

@@ -8,14 +8,95 @@ namespace CMP1903_A1_2324
 {
     internal class Game
     {
-        /*
-         * The Game class should create three die objects, roll them, sum and report the total of the three dice rolls.
-         *
-         * EXTRA: For extra requirements (these aren't required though), the dice rolls could be managed so that the
-         * rolls could be continous, and the totals and other statistics could be summarised for example.
-         */
+        //Properties
+        private int _diceRolls { get; set; }
+        private int _diceValue { get; set; }
+        private int _dieTotal { get; set; }
+        private float _dieAverage { get; set; }
 
-        //Methods
+        public int _noOf1s = 0;
+        public int _noOf2s = 0;
+        public int _noOf3s = 0;
+        public int _noOf4s = 0;
+        public int _noOf5s = 0;
+        public int _noOf6s = 0;
+
+        /// <summary>
+        /// The method DieStats creates 3 die objects, uses the roll method and sums the total of the die.
+        /// It then asks if you want to contimue rolling, and continues creating new objects, and totalling the total amount rolled
+        /// </summary>
+
+        // Method
+        public int DiceRolling()
+        {
+            // while 3 or less die have been created it continues to create and "Roll" new die objects
+            while (_diceRolls != 3)
+            {
+                _diceRolls++; // Incrementing the counter by one 
+                Die newDice = new Die(); // Instantiating the object
+                Console.WriteLine("Dice {0} is {1}", _diceRolls, _diceValue = newDice.Roll()); // Outputting the number of dice rolled and the roll value
+                Amounts();
+                _dieTotal += _diceValue; // Adding the roll to the total
+            }
+            // Displaying the the total of the three dice
+            Console.WriteLine("This is the total of your three dice rolls {0}", _dieTotal);
+
+            return _dieTotal;
+        }
+
+        public void KeepRolling()
+        {
+            bool continueToRoll;
+
+            do
+            {
+                _diceRolls++;
+                Die newDice = new Die();
+                Console.WriteLine("Dice {0} is {1}", _diceRolls, _diceValue = newDice.Roll());
+                Amounts();
+                _dieTotal += _diceValue;
+                _dieAverage = _dieTotal / _diceRolls;
+                Console.WriteLine("The total is {0} and the average roll is {1}", _dieTotal, _dieAverage);
+
+                Console.WriteLine("-------------------------------");
+                Console.WriteLine("Do you want to roll again? Enter 'no' to exit the loop.");
+                string answer = Console.ReadLine();
+                continueToRoll = answer.ToLower() != "no";
+            } while (continueToRoll);
+        }
+
+        private void Amounts()
+        {
+            switch (_diceValue)
+            {
+                case 1:
+                    _noOf1s++;
+                    break;
+                case 2:
+                    _noOf2s++;
+                    break;
+                case 3:
+                    _noOf3s++;
+                    break;
+                case 4:
+                    _noOf4s++;
+                    break;
+                case 5:
+                    _noOf5s++;
+                    break;
+                case 6:
+                    _noOf6s++;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void DisplayAmounts()
+        {
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine("Amount of 1s' {0}\nAmount of 2s' {1}\nAmount of 3s' {2}\nAmount of 4s' {3}\nAmount of 5s' {4}\nAmount of 6s' {5}", _noOf1s, _noOf2s, _noOf3s, _noOf4s, _noOf5s, _noOf6s);
+        }
 
     }
 }
