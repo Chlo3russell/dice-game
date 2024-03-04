@@ -46,34 +46,23 @@ namespace CMP1903_A1_2324
 
         public void KeepRolling()
         {
-            Console.WriteLine("------------------------------- \nDo you want to roll again, enter no to exit the loop?");
-            // Defining a bool to create a condition for the while loop
-            bool continueToRoll = true;
-            string answer = Console.ReadLine();
+            bool continueToRoll;
 
-            if (answer.ToLower() == "no")
-            {
-                continueToRoll = false;
-            }
-
-            while (continueToRoll == true) // The continous roller loopes until the input in no
+            do
             {
                 _diceRolls++;
-                //Creating a new object again
                 Die newDice = new Die();
                 Console.WriteLine("Dice {0} is {1}", _diceRolls, _diceValue = newDice.Roll());
                 Amounts();
-                // Die statistics
                 _dieTotal += _diceValue;
                 _dieAverage = _dieTotal / _diceRolls;
                 Console.WriteLine("The total is {0} and the average roll is {1}", _dieTotal, _dieAverage);
-                // Continuing the loop
-                answer = Console.ReadLine();
-                if (answer.ToLower() == "no")
-                {
-                    continueToRoll = false;
-                }
-            }
+
+                Console.WriteLine("-------------------------------");
+                Console.WriteLine("Do you want to roll again? Enter 'no' to exit the loop.");
+                string answer = Console.ReadLine();
+                continueToRoll = answer.ToLower() != "no";
+            } while (continueToRoll);
         }
 
         private void Amounts()
