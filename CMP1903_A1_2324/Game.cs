@@ -76,7 +76,7 @@ namespace CMP1903_A1_2324
             }
         }
 
-        public void Amounts()
+        private void Amounts()
         {
             switch (_diceValue)
             {
