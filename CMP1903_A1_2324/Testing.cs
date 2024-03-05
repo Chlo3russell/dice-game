@@ -40,7 +40,7 @@ namespace CMP1903_A1_2324
             Console.WriteLine("-------------------------------");
             int testGameTotal = testGame.DiceRolling();
 
-            Debug.Assert(testGameTotal <= 18 && testGameTotal >= 3, "The total of the dies is outside the logical range");
+            Debug.Assert(testGameTotal <= 18 && testGameTotal >= 3, "The total of the dies is outside the logical range"); 
         }
     }
 }
