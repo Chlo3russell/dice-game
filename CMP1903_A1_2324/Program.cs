@@ -19,10 +19,8 @@ namespace CMP1903_A1_2324
             // Tells you how many of each no was rolled
             newGame.DisplayAmounts();
 
-            // Testing the two classes Game and Die
+            // Testing the classes with debug.assert
             Testing test1 = new Testing();
-            test1.DieTesting();
-            test1.GameTesting();
         }
     }
 }
