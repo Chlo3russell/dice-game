@@ -8,25 +8,26 @@ namespace CMP1903_A1_2324
 {
     internal class Game
     {
-        //Properties
+        // Properties
+        // In order: public , protected, then private
+        protected int noOf1s = 0;
+        protected int noOf2s = 0;
+        protected int noOf3s = 0;
+        protected int noOf4s = 0;
+        protected int noOf5s = 0;
+        protected int noOf6s = 0;
+
         private int _diceRolls { get; set; }
         private int _diceValue { get; set; }
         private int _dieTotal { get; set; }
         private float _dieAverage { get; set; }
 
-        public int _noOf1s = 0;
-        public int _noOf2s = 0;
-        public int _noOf3s = 0;
-        public int _noOf4s = 0;
-        public int _noOf5s = 0;
-        public int _noOf6s = 0;
+        // Methods
 
         /// <summary>
-        /// The method DieStats creates 3 die objects, uses the roll method and sums the total of the die.
-        /// It then asks if you want to contimue rolling, and continues creating new objects, and totalling the total amount rolled
+        /// DiceRolling creates three dice objects, displays the die number and the roll valueand  adds the three amounts to a running total
         /// </summary>
-
-        // Method
+        /// <returns> The method returns the private dietotal </returns>
         public int DiceRolling()
         {
             // while 3 or less die have been created it continues to create and "Roll" new die objects
@@ -44,59 +45,74 @@ namespace CMP1903_A1_2324
             return _dieTotal;
         }
 
+        /// <summary>
+        /// This method creates a loop for the user to continue rolling.
+        /// It uses the private method of amounts to tally how many of each die value we get and calculates the average roll
+        /// There is no return value for this method hence the void
+        /// </summary>
         public void KeepRolling()
         {
+            Console.WriteLine("------------------------------- \nDo you want to roll again, enter no to exit the loop?");
+            // Two local variables 
             bool continueToRoll;
-
+            string answer = Console.ReadLine();
+            // Short hand if statement using the following syntax -- variable = (condition) ? expressionTrue :  expressionFalse;
+            continueToRoll = answer == "no" ? continueToRoll = false : continueToRoll = true;
+            // A while loop
             do
             {
-                _diceRolls++;
-                Die newDice = new Die();
+                _diceRolls++; // Incremening the counter
+                Die newDice = new Die(); // Instantiating a new object
                 Console.WriteLine("Dice {0} is {1}", _diceRolls, _diceValue = newDice.Roll());
-                Amounts();
-                _dieTotal += _diceValue;
-                _dieAverage = _dieTotal / _diceRolls;
+                Amounts(); // Calling the amounts methods
+                _dieTotal += _diceValue; // Adding to the running total
+                _dieAverage = _dieTotal / _diceRolls; // Finding the average
                 Console.WriteLine("The total is {0} and the average roll is {1}", _dieTotal, _dieAverage);
 
-                Console.WriteLine("-------------------------------");
-                Console.WriteLine("Do you want to roll again? Enter 'no' to exit the loop.");
-                string answer = Console.ReadLine();
+                Console.WriteLine("------------------------------- \nDo you want to roll again, enter no to exit the loop?");
+                answer = Console.ReadLine();
                 continueToRoll = answer.ToLower() != "no";
             } while (continueToRoll);
         }
 
+        /// <summary>
+        /// A method to display the amount of rolls with that value
+        /// </summary>
+        public void DisplayAmounts()
+        {
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine("Amount of 1s' {0}\nAmount of 2s' {1}\nAmount of 3s' {2}\nAmount of 4s' {3}\nAmount of 5s' {4}\nAmount of 6s' {5}", noOf1s, noOf2s, noOf3s, noOf4s, noOf5s, noOf6s);
+        }
+
+        /// <summary>
+        /// The private method Amounts loops through cases 1 - 6 and increments the amounts by one.
+        /// </summary>
         private void Amounts()
         {
             switch (_diceValue)
             {
                 case 1:
-                    _noOf1s++;
+                    noOf1s++;
                     break;
                 case 2:
-                    _noOf2s++;
+                    noOf2s++;
                     break;
                 case 3:
-                    _noOf3s++;
+                    noOf3s++;
                     break;
                 case 4:
-                    _noOf4s++;
+                    noOf4s++;
                     break;
                 case 5:
-                    _noOf5s++;
+                    noOf5s++;
                     break;
                 case 6:
-                    _noOf6s++;
+                    noOf6s++;
                     break;
                 default:
                     break;
+
             }
         }
-
-        public void DisplayAmounts()
-        {
-            Console.WriteLine("-------------------------------");
-            Console.WriteLine("Amount of 1s' {0}\nAmount of 2s' {1}\nAmount of 3s' {2}\nAmount of 4s' {3}\nAmount of 5s' {4}\nAmount of 6s' {5}", _noOf1s, _noOf2s, _noOf3s, _noOf4s, _noOf5s, _noOf6s);
-        }
-
     }
 }

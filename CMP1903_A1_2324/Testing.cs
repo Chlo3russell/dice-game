@@ -9,32 +9,38 @@ namespace CMP1903_A1_2324
 {
     internal class Testing
     {
+
+        // Testing constructor 
+        public Testing() 
+        {
+            DieTesting();
+            GameTesting();
+        }
+
+        /// <summary>
+        /// This method tests the die class and checks that the value is between 1 - 6
+        /// </summary>
+
         //Method
-        public int DieTesting()
+        public void DieTesting()
         {
             Die dice1 = new Die();
             int die1value = dice1.Roll();
-            Die dice2 = new Die();
-            int die2value = dice2.Roll();
-            Die dice3 = new Die();
-            int dice3value = dice3.Roll();
-            int dieTotal = die1value + die2value + dice3value;
 
             Debug.Assert(die1value <= 6 && die1value >= 1, "The dice rolled higher or lower than a 6 sided die can roll");
-            //Debug.Assert(dieTotal >= 18 && dieTotal <= 3, "The total of the dies is outside the logical range");
-
-            return die1value;
         }
 
-        public int GameTesting()
+        /// <summary>
+        /// This method tests the Game class and checks that the total of the three die are within the logical 6 sided die range
+        /// </summary>  
+
+        public void GameTesting()
         {
             Game testGame = new Game();
             Console.WriteLine("-------------------------------");
             int testGameTotal = testGame.DiceRolling();
 
             Debug.Assert(testGameTotal <= 18 && testGameTotal >= 3, "The total of the dies is outside the logical range");
-
-            return testGameTotal;
         }
     }
 }
