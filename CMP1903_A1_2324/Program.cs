@@ -21,6 +21,8 @@ namespace CMP1903_A1_2324
 
             // Testing the classes with debug.assert
             Testing test1 = new Testing();
+
+            /// For coding standards used <see cref="https://google.github.io/styleguide/csharp-style.html"/>
         }
     }
 }
