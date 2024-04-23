@@ -8,13 +8,15 @@ namespace Dice_Game
 {
     internal class SevensOut : Game
     {
+        // Properties
+
+        private new int _playerOneScore;
+        private new int _playerTwoScore;
 
         // Constructor 
-        public SevensOut()
+        public SevensOut(string UserName)
         {
-
             _playerTotal = 0;
-
 
             _diceList = new List<Die>();
             for (int i = 0; i < 2; i++)
@@ -22,45 +24,31 @@ namespace Dice_Game
                 _diceList.Add(new Die());
             }
 
-            /*if (base._isComputer)
-            {
-                int playerScore = RollTwoDie();
+            userName = UserName;
+            userName2 = computerUserName;
+            base._isComputer = true;
 
-                Console.WriteLine("-------------------------------");
-
-                int computerScore = ComputerRollTwoDie();
-
-                Console.WriteLine("{0} finished the game with a total of {1}", userName, playerScore);
-                Console.WriteLine("{0} finished the game with a total of {1}", computerUserName, computerScore);
-
-                base.WhoWon(playerScore, userName, computerScore, computerUserName);
-                base.Menu();
-            }
-            else
-            {
-                int playerScore = RollTwoDie();
-
-                Console.WriteLine("-------------------------------");
-
-                int playerScore2 = RollTwoDie();
-
-                Console.WriteLine("{0} finished the game with a total of {1}", userName, playerScore);
-                Console.WriteLine("{0} finished the game with a total of {1}", userName2, playerScore2);
-
-                base.WhoWon(playerScore, userName, playerScore2, userName2);
-
-                base.Menu();
-            }*/
-
-            // shorten this no another method
-
+            StartGame();
         }
 
-        public SevensOut(int pNumber, string uName)
+        public SevensOut(string UserName, string UserName2)
         {
-            base.userName = uName;
+            _playerTotal = 0;
 
+            _diceList = new List<Die>();
+            for (int i = 0; i < 2; i++)
+            {
+                _diceList.Add(new Die());
+            }
+
+            userName = UserName;
+            userName2 = UserName2;
+            base._isComputer = false;
+
+            StartGame();
         }
+
+        //Methods
 
         public int RollTwoDie()
         {
@@ -86,29 +74,6 @@ namespace Dice_Game
             return _playerTotal;
         }
 
-        protected override void WinnerChecker(int total, int[] diceValues)
-        {
-            if (total == 7)
-            {
-                Console.WriteLine("Winner Winner!");
-            }
-            else
-            {
-                if (diceValues[0] == diceValues[1]) 
-                {
-                    Console.WriteLine("Whoops you rolled a double... Har Har");
-                    _playerTotal += (total * 2);
-                    RollTwoDie();
-                }
-                else 
-                {
-                    _playerTotal += total;
-                    RollTwoDie();
-                }
-            }
-        }
-
-
         public int ComputerRollTwoDie()
         {
             int[] diceValues = new int[2];
@@ -124,6 +89,72 @@ namespace Dice_Game
             ComputerWinnerChecker(total, diceValues);
 
             return _playerTotal;
+        }
+
+
+        protected override void StartGame()
+        {
+            if (base._isComputer)
+            {
+                int playerScore = RollTwoDie();
+
+                Console.WriteLine("-------------------------------");
+
+                int computerScore = ComputerRollTwoDie();
+
+                Console.WriteLine("{0} finished the game with a total of {1}", userName, playerScore);
+                Console.WriteLine("{0} finished the game with a total of {1}", userName2, computerScore);
+                _statistics.WorstSevensOut(playerScore);
+                _statistics.WorstSevensOut(computerScore);
+
+                WhoWon(playerScore, base.userName, computerScore, computerUserName);
+                _statistics.AddSevensOut();
+
+                base.Menu();
+            }
+            else
+            {
+                int playerScore = RollTwoDie();
+
+                Console.WriteLine("-------------------------------");
+
+                int playerScore2 = RollTwoDie();
+
+                Console.WriteLine("{0} finished the game with a total of {1}", userName, playerScore);
+                Console.WriteLine("{0} finished the game with a total of {1}", userName2, playerScore2);
+                _statistics.WorstSevensOut(playerScore);
+                _statistics.WorstSevensOut(playerScore2);
+
+
+
+                WhoWon(playerScore, base.userName, playerScore2, base.userName2);
+                _statistics.AddSevensOut();
+
+
+                base.Menu();
+            }
+        }
+
+        protected override void WinnerChecker(int total, int[] diceValues)
+        {
+            if (total == 7)
+            {
+                Console.WriteLine("Seven Nice!");
+            }
+            else
+            {
+                if (diceValues[0] == diceValues[1])
+                {
+                    Console.WriteLine("Whoops you rolled a double... Har Har");
+                    _playerTotal += (total * 2);
+                    RollTwoDie();
+                }
+                else
+                {
+                    _playerTotal += total;
+                    RollTwoDie();
+                }
+            }
         }
 
         private void ComputerWinnerChecker(int total, int[] diceValues)
@@ -146,6 +177,26 @@ namespace Dice_Game
                 }
             }
         }
+
+        protected override void WhoWon(int scoreOne, string userOne, int scoreTwo, string userTwo)
+        {
+
+            if (scoreOne == scoreTwo)
+            {
+                Console.WriteLine("You both drew, points for neither!");
+            }
+            else if (scoreOne < scoreTwo)
+            {
+                Console.WriteLine("{0} won with {1}", userName, scoreOne);
+                _playerOneScore++;
+            }
+            else
+            {
+                Console.WriteLine("{0} won with {1}", userName2, scoreTwo);
+                _playerTwoScore++;
+            }
+        }
+
 
     }
 }
