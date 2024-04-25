@@ -49,49 +49,6 @@ namespace Dice_Game
         }
 
         //Methods
-
-        public int RollTwoDie()
-        {
-            int[] diceValues = new int[2];
-            Console.WriteLine("Click anything to roll...");
-            Console.ReadLine();
-
-            Console.WriteLine("You rolled a: ");
-            foreach (var die in _diceList)
-            {
-                int index = _diceList.IndexOf(die);
-                int roll = die.Roll();
-                diceValues[index] = roll;
-                Console.WriteLine(diceValues[index]);
-            }
-
-            int total = diceValues.Sum();
-
-            Console.WriteLine("Your total is: {0}", total);
-
-            WinnerChecker(total, diceValues);
-
-            return _playerTotal;
-        }
-
-        public int ComputerRollTwoDie()
-        {
-            int[] diceValues = new int[2];
-            
-            foreach (var die in _diceList)
-            {
-                int index = _diceList.IndexOf(die);
-                int roll = die.Roll();
-                diceValues[index] = roll;
-            }
-
-            int total = diceValues.Sum();
-            ComputerWinnerChecker(total, diceValues);
-
-            return _playerTotal;
-        }
-
-
         protected override void StartGame()
         {
             if (base._isComputer)
@@ -135,13 +92,50 @@ namespace Dice_Game
             }
         }
 
-        protected override void WinnerChecker(int total, int[] diceValues)
+        public int RollTwoDie()
         {
-            if (total == 7)
+            int[] diceValues = new int[2];
+            Console.WriteLine("Click anything to roll...");
+            Console.ReadLine();
+
+            Console.WriteLine("You rolled a: ");
+            foreach (var die in _diceList)
             {
-                Console.WriteLine("Seven Nice!");
+                int index = _diceList.IndexOf(die);
+                int roll = die.Roll();
+                diceValues[index] = roll;
+                Console.WriteLine(diceValues[index]);
             }
-            else
+
+            int total = diceValues.Sum();
+
+            Console.WriteLine("Your total is: {0}", total);
+
+            SevenChecker(total, diceValues);
+
+            return _playerTotal;
+        }
+
+        private int ComputerRollTwoDie()
+        {
+            int[] diceValues = new int[2];
+
+            foreach (var die in _diceList)
+            {
+                int index = _diceList.IndexOf(die);
+                int roll = die.Roll();
+                diceValues[index] = roll;
+            }
+
+            int total = diceValues.Sum();
+            ComputerSevenChecker(total, diceValues);
+
+            return _playerTotal;
+        }
+
+        private void SevenChecker(int total, int[] diceValues)
+        {
+            if (total != 7)
             {
                 if (diceValues[0] == diceValues[1])
                 {
@@ -152,18 +146,16 @@ namespace Dice_Game
                 else
                 {
                     _playerTotal += total;
-                    RollTwoDie();
                 }
+                RollTwoDie();
+
             }
+
         }
 
-        private void ComputerWinnerChecker(int total, int[] diceValues)
+        private void ComputerSevenChecker(int total, int[] diceValues)
         {
-            if (total == 7)
-            {
-                
-            }
-            else
+            if (total != 7)
             {
                 if (diceValues[0] == diceValues[1])
                 {
@@ -178,7 +170,7 @@ namespace Dice_Game
             }
         }
 
-        protected override void WhoWon(int scoreOne, string userOne, int scoreTwo, string userTwo)
+        private void WhoWon(int scoreOne, string userOne, int scoreTwo, string userTwo)
         {
 
             if (scoreOne == scoreTwo)
@@ -196,7 +188,5 @@ namespace Dice_Game
                 _playerTwoScore++;
             }
         }
-
-
     }
 }

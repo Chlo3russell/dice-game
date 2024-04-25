@@ -190,28 +190,23 @@ namespace Dice_Game
             {
                 if ((_isComputer == true) && (user == "Dice Bot"))
                 {
-                    ComputerRollFiveDie(user);
+                    playerScore = ComputerRollFiveDie(user);
                 }
                 else
                 {
-
-                    KeepTwoDice(diceValues, user);
+                    playerScore = KeepTwoDice(diceValues, user);
                 }
-            }
-            else
-            {
-                Console.WriteLine("Nawh you got nothing! Lose turn.");
             }
 
             return playerScore;
-
         }
 
-        private void KeepTwoDice(int[] listOfDiceValues, string user )
+        private int KeepTwoDice(int[] listOfDiceValues, string user )
         {
             Console.WriteLine("You rolled a double: ");
             Console.WriteLine("Would you like to;\n1. Re-roll all of them or, \n2. Keep the double?");
-           
+
+            int playerScore = 0;
             bool repeat = true;
             int answer = 0;
 
@@ -235,14 +230,14 @@ namespace Dice_Game
                     Console.WriteLine("Input string is not a sequence of digits.");
                 }
             }
-
             if (answer == 1)
             {
-                RollFiveDie(user);
+                playerScore = RollFiveDie(user);
             }
             else
             {
                 int noOf1 = 0, noOf2 = 0, noOf3 = 0, noOf4 = 0, noOf5 = 0, noOf6 = 0;
+                bool diceAppearedTwice = false;
 
                 for (int i = 0; i < listOfDiceValues.Length; i++)
                 {
@@ -250,69 +245,64 @@ namespace Dice_Game
                     {
                         case 1:
                             noOf1++;
-                            if (noOf1 == 2)
+                            if (noOf1 == 2 && diceAppearedTwice == false)
                             {
                                 int[] newArray = { 1, 1};
-
-                                RollThreeDie(newArray, user);
-                                break;
+                                playerScore = RollThreeDie(newArray, user);
+                                diceAppearedTwice = true;
                             }
                             break;
                         case 2:
                             noOf2++;
-                            if (noOf2 == 2)
+                            if (noOf2 == 2 && diceAppearedTwice == false)
                             {
                                 int[] newArray = { 2, 2 };
-
-                                RollThreeDie(newArray, user);
-                                break;
+                                playerScore = RollThreeDie(newArray, user);
+                                diceAppearedTwice = true;
                             }
                             break;
                         case 3:
                             noOf3++;
-                            if (noOf3 == 2)
+                            if (noOf3 == 2 && diceAppearedTwice == false)
                             {
                                 int[] newArray = { 3, 3 };
-
-                                RollThreeDie(newArray, user);
-                                break;
+                                playerScore = RollThreeDie(newArray, user);
+                                diceAppearedTwice = true;
                             }
                             break;
                         case 4:
                             noOf4++;
-                            if (noOf4 == 2)
+                            if (noOf4 == 2 && diceAppearedTwice)
                             {
                                 int[] newArray = { 4, 4 };
-
-                                RollThreeDie(newArray, user);
-                                break;
+                                playerScore = RollThreeDie(newArray, user);
+                                diceAppearedTwice = true;
                             }
                             break;
                         case 5:
                             noOf5++;
-                            if (noOf5 == 2)
+                            if (noOf5 == 2 && diceAppearedTwice == false)
                             {
                                 int[] newArray = { 5, 5 };
-
-                                RollThreeDie(newArray, user);
-                                break;
+                                playerScore = RollThreeDie(newArray, user);
+                                diceAppearedTwice = true;
                             }
                             break;
                         case 6:
                             noOf6++;
-                            if (noOf6 == 2)
+                            if (noOf6 == 2 && diceAppearedTwice == false)
                             {
                                 int[] newArray = { 6, 6 };
-
-                                RollThreeDie(newArray, user);
-                                break;
+                                playerScore = RollThreeDie(newArray, user);
+                                diceAppearedTwice = true;
                             }
                             break;
                     }
                 }
             }
-        }
 
+            return playerScore;
+        }
 
         protected override void StartGame()
         {
@@ -338,7 +328,6 @@ namespace Dice_Game
                     _playerTwoScore += ComputerRollFiveDie(userName2);
                     Console.WriteLine("{0} score is {1}", userName2, _playerTwoScore);
 
-
                     if (_playerTwoScore >= 20)
                     {
                         Console.WriteLine("Congrats {0}, you made it too {1}! You win!", userName2, _playerTwoScore);
@@ -360,7 +349,6 @@ namespace Dice_Game
                     _playerOneScore += RollFiveDie(userName);
                     Console.WriteLine("{0} your current score is {1}", userName, _playerOneScore);
 
-
                     if (_playerOneScore >= 20)
                     {
                         Console.WriteLine("Congrats {0}, you made it too {1}! You win!", userName, _playerOneScore);
@@ -374,7 +362,6 @@ namespace Dice_Game
                     Console.WriteLine("{0}, its your turn...", userName2);
                     _playerTwoScore += RollFiveDie(userName2);
                     Console.WriteLine("{0} your current score is {1}", userName2, _playerTwoScore);
-
 
                     if (_playerTwoScore >= 20)
                     {
@@ -392,8 +379,5 @@ namespace Dice_Game
 
             base.Menu();
         }
-
-
-
     }
 }

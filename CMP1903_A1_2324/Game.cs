@@ -10,13 +10,13 @@ namespace Dice_Game
     internal abstract class Game
     {
         // Properties
-        // In order: public , protected, then private
-
         public string userName;
         public string userName2;
         public string computerUserName = "Dice Bot";
 
         protected bool _isComputer;
+        protected bool _isTest;
+
         protected int _answer;
         protected int _playerTotal;
         protected List<Die> _diceList;
@@ -44,13 +44,20 @@ namespace Dice_Game
 
         }
 
-
         //Methods
+        // Any methods that both the games share that cannot have a default value I have set to abstract
+        protected abstract void StartGame();
+
+        // Any methods that both games share, that can be overloaded I have given the virtual keyword
+        /// <summary>
+        /// The Menu Method is the base for both games, it is how both games share the the usernames and the computer values
+        /// It returns nothing as it is used solely as a menu. 
+        /// </summary>
         protected virtual void Menu()
         {
-            Console.WriteLine("What do you want to do?\n1. Play Sevens Out\n2. Play Three or More\n3. View score\n4. View Total Game Stats\n5. Quit game or Change Players");
+            Console.WriteLine("What do you want to do?\n1. Play Sevens Out\n2. Play Three or More\n3. View Total Game Stats\n4. Test the Game\n5. Quit game");
             bool repeat = true;
-
+            // Getting an answer whilst error checking to make sure it is an integer
             while (repeat)
             {
                 try
@@ -63,18 +70,17 @@ namespace Dice_Game
                     }
                     else
                     {
-                        Console.WriteLine("Invalid user input, please enter a valid answer");
+                        Console.WriteLine("Invalid user input, please enter a number betweeen 1 - 4");
                     }
                 }
                 catch (FormatException)
                 {
-                    Console.WriteLine("Input string is not a sequence of digits.");
+                    Console.WriteLine("Please enter a number.");
                 }
 
                 switch (_answer)
                 {
                     case 1:
-
                         if (_isComputer)
                         {
                             SevensOut sevensOut = new SevensOut(userName);
@@ -95,51 +101,19 @@ namespace Dice_Game
                         }
                         break;
                     case 3:
-                        Console.WriteLine("{0}'s score is {1} and {2}'s score is {3}", userName, _playerOneScore, userName2, _playerTwoScore);
-
-                        if (_playerOneScore == _playerTwoScore)
-                        {
-                            Console.WriteLine("You are drawing with {0} pointa!", _playerOneScore);
-                            Menu();
-                        }
-                        else if (_playerOneScore > _playerTwoScore)
-                        {
-                            Console.WriteLine("{0} is winning with {1}", userName, _playerOneScore);
-                            Menu();
-                        }
-                        else
-                        {
-                            Console.WriteLine("{0} is winning with {1}", userName2, _playerTwoScore);
-                            Menu();
-                        }
-                        break;
-                    case 4:
                         _statistics.DisplayStatistics();
                         Menu();
                         break;
-                    case 5:
-                        Console.WriteLine("Please choose the new players");
+                    case 4:
+                        Testing newTest = new Testing();
                         break;
-                    default:
-                        Console.WriteLine("Thanks for playing");
+                    case 5:
+                        Console.WriteLine("Thanks for Playing!");
+                        _statistics.DisplayStatistics();
+                        Console.ReadLine();
                         break;
                 }
             }
-        }
-
-        protected virtual void WhoWon(int scoreOne, string userOne, int scoreTwo, string userTwo)
-        {
-            
-        }
-
-        protected virtual void WinnerChecker(int total, int[] diceValues)
-        {
-           
-        }
-
-        protected virtual void StartGame()
-        {
-
         }
 
     }

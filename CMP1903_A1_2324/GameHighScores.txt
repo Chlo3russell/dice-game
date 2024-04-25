@@ -1,14 +1,14 @@
 GAME HIGH SCORES
 ------------------------------
 Total Amount of Games Played:
-32
+43
 Amount of SevensOut Played:
-25
+35
 Amount of ThreeOrMore Played:
-7
+9
 ------------------------------
 Worst SevensOut Score:
-93
+126
 Worst ThreeOrMore Round:
 105
 ------------------------------
