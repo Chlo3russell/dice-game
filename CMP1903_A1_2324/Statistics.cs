@@ -54,11 +54,7 @@ namespace Dice_Game
 
             int currentReccord = Int32.Parse(_arrayOfLines[12]);
 
-            if (currentReccord >= amountOfRounds)
-            {
-
-            }
-            else
+            if (currentReccord <= amountOfRounds)
             {
                 currentReccord = amountOfRounds;
             }
@@ -71,15 +67,11 @@ namespace Dice_Game
         {
             int currentReccord = Int32.Parse(_arrayOfLines[10]);
 
-            if (currentReccord >= playerScore)
-            {
-
-            }
-            else
+            if (currentReccord <= playerScore)
             {
                 currentReccord = playerScore;
             }
-
+  
             _arrayOfLines[10] = currentReccord.ToString();
             File.WriteAllLines(_filePathway, _arrayOfLines);
         }
@@ -115,10 +107,6 @@ namespace Dice_Game
             {
                 Console.WriteLine("Exception: " + e.Message);
             }
-            finally
-            {
-                Console.WriteLine("Executing finally block.");
-            }
         }
 
         public void Wipe()
@@ -138,7 +126,5 @@ namespace Dice_Game
             File.WriteAllLines(_filePathway, _arrayOfLines);
 
         }
-
-
     }
 }
