@@ -16,10 +16,12 @@ namespace Dice_Game
         public int playerTwoScore;
 
         private int _amountOfGamesEver;
-        private int _sevensOutWorstGame;
+        private int _sevensOutBestGame;
         private int _totalGamesPlayed;
 
         private string _filePathway = "C:\\Users\\chloe\\source\\repos\\dice-game\\CMP1903_A1_2324\\GameHighScores.txt";
+        // private string _filePathway = AppDomain.CurrentDomain.BaseDirectory + @"\GameHighScores.txt";
+
         private string[] _arrayOfLines;
 
         //Constructor
@@ -49,7 +51,7 @@ namespace Dice_Game
             File.WriteAllLines(_filePathway, _arrayOfLines);
         }
 
-        public void WorstThreeOrMore(int amountOfRounds)
+        public void LongestThreeOrMore(int amountOfRounds)
         {
 
             int currentReccord = Int32.Parse(_arrayOfLines[12]);
@@ -63,7 +65,7 @@ namespace Dice_Game
             File.WriteAllLines(_filePathway, _arrayOfLines);
         }
 
-        public void WorstSevensOut(int playerScore)
+        public void BestSevensOut(int playerScore)
         {
             int currentReccord = Int32.Parse(_arrayOfLines[10]);
 
@@ -90,7 +92,6 @@ namespace Dice_Game
 
             try
             {
-
                 StreamReader textReader = new StreamReader(_filePathway);
                 line = textReader.ReadLine();
 
@@ -99,32 +100,12 @@ namespace Dice_Game
                     Console.WriteLine(line);
                     line = textReader.ReadLine();
                 }
-
                 textReader.Close();
-
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception: " + e.Message);
             }
-        }
-
-        public void Wipe()
-        {
-            Console.WriteLine("Wiped ALL SCORES :((");
-
-            int numberToChange = 0;
-            int numberToChange1 = 0;
-            int numberToChange2 = 0;
-            int numberToChange3 = 0;
-
-            _arrayOfLines[5] = numberToChange.ToString();
-            _arrayOfLines[7] = numberToChange1.ToString();
-            _arrayOfLines[10] = numberToChange2.ToString();
-            _arrayOfLines[12] = numberToChange3.ToString();
-
-            File.WriteAllLines(_filePathway, _arrayOfLines);
-
         }
     }
 }

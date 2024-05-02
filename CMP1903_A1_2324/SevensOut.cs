@@ -8,91 +8,123 @@ namespace Dice_Game
 {
     internal class SevensOut : Game
     {
-        // Properties
 
-        private new int _playerOneScore;
-        private new int _playerTwoScore;
-
-        // Constructor 
-        public SevensOut(string UserName)
+        // Constructors
+        public SevensOut()
         {
-            _playerTotal = 0;
-
             _diceList = new List<Die>();
             for (int i = 0; i < 2; i++)
             {
                 _diceList.Add(new Die());
             }
-
-            userName = UserName;
-            userName2 = computerUserName;
-            base._isComputer = true;
-
-            StartGame();
         }
-
+        // The constructor sets up anything needed for the game
         public SevensOut(string UserName, string UserName2)
         {
-            _playerTotal = 0;
-
+            // Checking if the username is the default computer name, if true sets our _isComputer variable to true
+            if (UserName2 == "Dice Bot")
+            {
+                _isComputer = true;
+            }
+            // Creating a list of die objects
             _diceList = new List<Die>();
+            // Adding new die to this list 
             for (int i = 0; i < 2; i++)
             {
                 _diceList.Add(new Die());
             }
-
-            userName = UserName;
-            userName2 = UserName2;
-            base._isComputer = false;
-
+            // Setting the parameters to the public properties
+            this.userName = UserName;
+            this.userName2 = UserName2;
+            // Calling the StartGame method
             StartGame();
         }
 
         //Methods
-        protected override void StartGame()
+        /// <summary>
+        /// Ths method checks whether the total is seven.
+        /// If it isn't it then works out the score using the diceValues
+        /// </summary>
+        /// <param name="total"> The total of the two rolls </param>
+        /// <param name="diceValues"> The individual roll values </param>
+        /// <returns> A bool, isSeven, to tell the rollTwoDie method to either continue rolling or stop</returns>
+        public bool SevenChecker(int total, int[] diceValues)
         {
-            if (base._isComputer)
+            bool isSeven = false;
+
+            if (total != 7)
             {
-                int playerScore = RollTwoDie();
-
-                Console.WriteLine("-------------------------------");
-
-                int computerScore = ComputerRollTwoDie();
-
-                Console.WriteLine("{0} finished the game with a total of {1}", userName, playerScore);
-                Console.WriteLine("{0} finished the game with a total of {1}", userName2, computerScore);
-                _statistics.WorstSevensOut(playerScore);
-                _statistics.WorstSevensOut(computerScore);
-
-                WhoWon(playerScore, base.userName, computerScore, computerUserName);
-                _statistics.AddSevensOut();
-
-                base.Menu();
+                if (diceValues[0] == diceValues[1])
+                {
+                    _playerTotal += (total * 2);
+                }
+                else
+                {
+                    _playerTotal += total;
+                }
             }
             else
             {
-                int playerScore = RollTwoDie();
-
-                Console.WriteLine("-------------------------------");
-
-                int playerScore2 = RollTwoDie();
-
-                Console.WriteLine("{0} finished the game with a total of {1}", userName, playerScore);
-                Console.WriteLine("{0} finished the game with a total of {1}", userName2, playerScore2);
-                _statistics.WorstSevensOut(playerScore);
-                _statistics.WorstSevensOut(playerScore2);
-
-
-
-                WhoWon(playerScore, base.userName, playerScore2, base.userName2);
-                _statistics.AddSevensOut();
-
-
-                base.Menu();
+                isSeven = true;
             }
+            return isSeven;
         }
 
-        public int RollTwoDie()
+        /// <summary>
+        /// This is my overrided inherited method.
+        /// It sets the players scores as zero, then the player total as zero
+        /// Then it calls of the RollTwoDie method to get a total score for player one, and the same for player two (either player or computer)
+        /// Then uses an if statement to determine the winner
+        /// </summary>
+        protected override void StartGame()
+        {
+            int playerScore = 0;
+            int playerScore2 = 0;
+
+            _playerTotal = 0;
+            Console.WriteLine($"{userName}, it is your turn");
+            playerScore = RollTwoDie();
+            Console.WriteLine("-------------------------------");
+
+            if (base._isComputer)
+            {
+                _playerTotal = 0;
+                playerScore2 = RollTwoDie(_isComputer);
+            }
+            else
+            {
+                _playerTotal = 0;
+                Console.WriteLine($"{userName2}, it is your turn");
+                playerScore2 = RollTwoDie();
+            }
+
+            Console.WriteLine("{0} finished the game with a total of {1}", userName, playerScore);
+            Console.WriteLine("{0} finished the game with a total of {1}", userName2, playerScore2);
+
+            if (playerScore == playerScore2)
+            {
+                Console.WriteLine("You both drew!");
+            }
+            else if (playerScore > playerScore2)
+            {
+                Console.WriteLine("{0} won with {1}", userName, playerScore);
+                _statistics.BestSevensOut(playerScore);
+            }
+            else
+            {
+                Console.WriteLine("{0} won with {1}", userName2, playerScore2);
+                _statistics.BestSevensOut(playerScore2);
+            }
+            _statistics.AddSevensOut();
+            base.Menu();
+        }
+
+        /// <summary>
+        /// These method creates an array of integers, and then loops through the die in _diceList
+        /// Rolls the die then adds the value to the array
+        /// </summary>
+        /// <returns> The players overalll score </returns>
+        private int RollTwoDie()
         {
             int[] diceValues = new int[2];
             Console.WriteLine("Click anything to roll...");
@@ -108,15 +140,17 @@ namespace Dice_Game
             }
 
             int total = diceValues.Sum();
+            bool isSeven = SevenChecker(total, diceValues);
 
-            Console.WriteLine("Your total is: {0}", total);
-
-            SevenChecker(total, diceValues);
+            if (isSeven == false)
+            {
+                RollTwoDie();
+            }
 
             return _playerTotal;
         }
 
-        private int ComputerRollTwoDie()
+        private int RollTwoDie(bool computer)
         {
             int[] diceValues = new int[2];
 
@@ -128,65 +162,14 @@ namespace Dice_Game
             }
 
             int total = diceValues.Sum();
-            ComputerSevenChecker(total, diceValues);
+            bool isSeven = SevenChecker(total, diceValues);
+
+            if (isSeven == false)
+            {
+                RollTwoDie(_isComputer);
+            }
 
             return _playerTotal;
-        }
-
-        private void SevenChecker(int total, int[] diceValues)
-        {
-            if (total != 7)
-            {
-                if (diceValues[0] == diceValues[1])
-                {
-                    Console.WriteLine("Whoops you rolled a double... Har Har");
-                    _playerTotal += (total * 2);
-                    RollTwoDie();
-                }
-                else
-                {
-                    _playerTotal += total;
-                }
-                RollTwoDie();
-
-            }
-
-        }
-
-        private void ComputerSevenChecker(int total, int[] diceValues)
-        {
-            if (total != 7)
-            {
-                if (diceValues[0] == diceValues[1])
-                {
-                    _playerTotal += (total * 2);
-                    ComputerRollTwoDie();
-                }
-                else
-                {
-                    _playerTotal += total;
-                    ComputerRollTwoDie();
-                }
-            }
-        }
-
-        private void WhoWon(int scoreOne, string userOne, int scoreTwo, string userTwo)
-        {
-
-            if (scoreOne == scoreTwo)
-            {
-                Console.WriteLine("You both drew, points for neither!");
-            }
-            else if (scoreOne < scoreTwo)
-            {
-                Console.WriteLine("{0} won with {1}", userName, scoreOne);
-                _playerOneScore++;
-            }
-            else
-            {
-                Console.WriteLine("{0} won with {1}", userName2, scoreTwo);
-                _playerTwoScore++;
-            }
         }
     }
 }
