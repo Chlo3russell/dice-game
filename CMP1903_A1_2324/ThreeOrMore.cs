@@ -21,12 +21,8 @@ namespace Dice_Game
         private int _amountOfRounds {  get; set; }
 
         // Constructors
-        public ThreeOrMore(string UserName)
+        public ThreeOrMore()
         {
-            _playerOneScore = 0;
-            _playerTwoScore = 0;
-            _isWinner = false;
-
             _diceList = new List<Die>();
             for (int i = 0; i < 5; i++)
             {
@@ -38,21 +34,22 @@ namespace Dice_Game
             {
                 _threeDiceList.Add(new Die());
             }
-
-            this.userName = UserName;
-            this.userName2 = base.computerUserName;
-            this._isComputer = true;
-
-            StartGame();
         }
-
+        // The constructor sets up anything needed for the game
         public ThreeOrMore(string UserName, string UserName2)
         {
+            // Checking if the username is the default computer name, if true sets our _isComputer variable to true
+            if (UserName2 == "Dice Bot")
+            {
+                _isComputer = true;
+            }
+            // Resetting the scores
             _playerOneScore = 0;
             _playerTwoScore = 0;
             _isWinner = false;
-
+            // Creating a list of die objects
             _diceList = new List<Die>();
+            // Adding new die to this list
             for (int i = 0; i < 5; i++)
             {
                 _diceList.Add(new Die());
@@ -63,17 +60,114 @@ namespace Dice_Game
             {
                 _threeDiceList.Add(new Die());
             }
-
-            userName = UserName;
-            userName2 = UserName2;
-            base._isComputer = false;
-
+            // Setting the paramters to the properties
+            this.userName = UserName;
+            this.userName2 = UserName2;
+            // Calling my StartGame method
             StartGame();
         }
 
         // Methods
+        /// <summary>
+        /// This is my public multiple checker, it uses LINQ to check for multiples
+        /// It will either allocate the score or call the KeepDouble method
+        /// </summary>
+        /// <param name="user"> I pass the username here to be able to create my computer player</param>
+        /// <returns> The rolls score </returns>
+        public int AnyMultiples(int[] diceValues, string user)
+        {
+            int playerScore = 0;
+            // Using LINQ to group my rolls into seperate groups by value and then convert the groups to a dictoary and getting the total count
+            var diceCounts = diceValues.GroupBy(x => x)
+                           .ToDictionary(g => g.Key, g => g.Count());
 
-        public int RollFiveDie(string user)
+            if (diceCounts.ContainsValue(5))
+            {
+                playerScore = 12;
+            }
+            else if (diceCounts.ContainsValue(4))
+            {
+                playerScore = 6;
+            }
+            else if (diceCounts.ContainsValue(3))
+            {
+                playerScore = 3;
+            }
+            else if (diceCounts.ContainsValue(2))
+            {
+                // Using LINQ again to find the first keyvalue with a value of two
+                var diceWithValueTwo = diceCounts.First(kv => kv.Value == 2).Key;
+
+                if (_isComputer && user == "Dice Bot")
+                {
+                    playerScore = ComputerRollFiveDie(user);
+                }
+                else
+                {
+                    // If the player is a not a computer, It creates a new array with the two keyvalue pairs.
+                    playerScore = KeepTwoDice(new[] { diceWithValueTwo, diceWithValueTwo }, user);
+                }
+            }
+
+            return playerScore;
+        }
+        /// <summary>
+        /// Again overrrided inherited method.
+        /// While _isWinner equals false it will continue to rollFiveDie until a users score is over 20 
+        /// </summary>
+        protected override void StartGame()
+        {
+            _amountOfRounds = 0;
+
+            while (_isWinner == false)
+            {
+                Console.WriteLine("{0}, its your turn...", userName);
+                _playerOneScore += RollFiveDie(userName);
+                Console.WriteLine("{0} your current score is {1}", userName, _playerOneScore);
+
+                if (_playerOneScore >= 20)
+                {
+                    Console.WriteLine("Congrats {0}, you made it too {1}! You win!", userName, _playerOneScore);
+                    _isWinner = true;
+                    break;
+                }
+
+                Console.WriteLine("-------------------------------");
+
+                if (_isComputer == true)
+                {
+                    _playerTwoScore += ComputerRollFiveDie(userName2);
+                    Console.WriteLine("{0} score is {1}", userName2, _playerTwoScore);
+                }
+                else
+                {
+                    Console.WriteLine("{0}, its your turn...", userName2);
+                    _playerTwoScore += RollFiveDie(userName2);
+                    Console.WriteLine("{0} your current score is {1}", userName2, _playerTwoScore);
+                }
+
+                if (_playerTwoScore >= 20)
+                {
+                    Console.WriteLine("Congrats {0}, you made it too {1}! You win!", userName2, _playerTwoScore);
+                    _isWinner = true;
+                    break;
+                }
+
+                Console.WriteLine("-------------------------------");
+
+            }
+
+            _statistics.AddThreeOrMore();
+            _statistics.LongestThreeOrMore(_amountOfRounds);
+            base.Menu();
+        }
+        /// <summary>
+        /// These method creates an array of integers, and then loops through the die in _diceList
+        /// Rolls the die then adds the value to the array
+        /// </summary>
+        /// <param name="user"> I need to pass the username here for the AnyMultiples </param>
+        /// <returns> It returns the players score </returns>
+        private int RollFiveDie(string user)
         {
             int playerScore = 0;
 
@@ -95,8 +189,31 @@ namespace Dice_Game
             return playerScore;
 
         }
+        private int ComputerRollFiveDie(string user)
+        {
+            int playerScore = 0;
 
-        public int RollThreeDie(int[] doubleDie, string user)
+            int[] diceValues = new int[5];
+
+            Console.WriteLine("Dice Bot rolled: ");
+            foreach (var die in _diceList)
+            {
+                int index = _diceList.IndexOf(die);
+                int roll = die.Roll();
+                diceValues[index] = roll;
+                Console.WriteLine(diceValues[index]);
+            }
+
+            playerScore = AnyMultiples(diceValues, user);
+
+            return playerScore;
+        }
+        /// <summary>
+        /// This creates an array of integers, and then loops through the die in _diceList
+        /// Rolls the die then adds the value to the array
+        /// Then concatanates the two arrays for the AnyMultiplies
+        /// </summary>
+        private int RollThreeDie(int[] doubleDie, string user)
         {
             int playerScore = 0;
 
@@ -122,89 +239,12 @@ namespace Dice_Game
             return playerScore;
         }
 
-        public int ComputerRollFiveDie(string user)
+        /// <summary>
+        /// Asks the user whether or not they would like to keep the double
+        /// </summary>
+        private int KeepTwoDice(int[] listOfDiceValues, string user)
         {
-            int playerScore = 0;
-
-            int[] diceValues = new int[5];
-
-            Console.WriteLine("Dice Bot rolled: ");
-            foreach (var die in _diceList)
-            {
-                int index = _diceList.IndexOf(die);
-                int roll = die.Roll();
-                diceValues[index] = roll;
-                Console.WriteLine(diceValues[index]);
-            }
-
-            playerScore = AnyMultiples(diceValues, user);
-
-            return playerScore;
-
-        }
-
-        private int AnyMultiples(int[] diceValues, string user)
-        {
-            int playerScore = 0;
-            int noOf1 = 0, noOf2 = 0, noOf3 = 0, noOf4 = 0, noOf5 = 0, noOf6 = 0;
-            _amountOfRounds++;
-
-            for (int i = 0; i < diceValues.Length; i++)
-            {
-                switch (diceValues[i])
-                {
-                    case 1:
-                        noOf1++;
-                        break;
-                    case 2:
-                        noOf2++;
-                        break;
-                    case 3:
-                        noOf3++;
-                        break;
-                    case 4:
-                        noOf4++;
-                        break;
-                    case 5:
-                        noOf5++;
-                        break;
-                    case 6:
-                        noOf6++;
-                        break;
-                }
-            }
-
-            if ((noOf1 == 5) || (noOf2 == 5) || (noOf3 == 5) || (noOf4 ==  5) || ( noOf5 == 5) || (noOf6 == 5))
-            {
-                playerScore = 12;
-            }
-            else if ((noOf1 == 4) || (noOf2 == 4) || (noOf3 == 4) || (noOf4 == 4) || (noOf5 == 4) || (noOf6 == 4))
-            {
-                playerScore = 6;
-            }
-            else if ((noOf1 == 3) || (noOf2 == 3) || (noOf3 == 3) || (noOf4 == 3) || (noOf5 == 3) || (noOf6 == 3))
-            {
-                playerScore = 3;
-            }
-            else if ((noOf1 == 2) || (noOf2 == 2) || (noOf3 == 2) || (noOf4 == 2) || (noOf5 == 2) || (noOf6 == 2))
-            {
-                if ((_isComputer == true) && (user == "Dice Bot"))
-                {
-                    playerScore = ComputerRollFiveDie(user);
-                }
-                else
-                {
-                    playerScore = KeepTwoDice(diceValues, user);
-                }
-            }
-
-            return playerScore;
-        }
-
-        private int KeepTwoDice(int[] listOfDiceValues, string user )
-        {
-            Console.WriteLine("You rolled a double: ");
-            Console.WriteLine("Would you like to;\n1. Re-roll all of them or, \n2. Keep the double?");
+            Console.WriteLine("You rolled a double, would you like to;\n1. Re-roll all of them or, \n2. Keep the double? ");
 
             int playerScore = 0;
             bool repeat = true;
@@ -236,148 +276,10 @@ namespace Dice_Game
             }
             else
             {
-                int noOf1 = 0, noOf2 = 0, noOf3 = 0, noOf4 = 0, noOf5 = 0, noOf6 = 0;
-                bool diceAppearedTwice = false;
-
-                for (int i = 0; i < listOfDiceValues.Length; i++)
-                {
-                    switch (listOfDiceValues[i])
-                    {
-                        case 1:
-                            noOf1++;
-                            if (noOf1 == 2 && diceAppearedTwice == false)
-                            {
-                                int[] newArray = { 1, 1};
-                                playerScore = RollThreeDie(newArray, user);
-                                diceAppearedTwice = true;
-                            }
-                            break;
-                        case 2:
-                            noOf2++;
-                            if (noOf2 == 2 && diceAppearedTwice == false)
-                            {
-                                int[] newArray = { 2, 2 };
-                                playerScore = RollThreeDie(newArray, user);
-                                diceAppearedTwice = true;
-                            }
-                            break;
-                        case 3:
-                            noOf3++;
-                            if (noOf3 == 2 && diceAppearedTwice == false)
-                            {
-                                int[] newArray = { 3, 3 };
-                                playerScore = RollThreeDie(newArray, user);
-                                diceAppearedTwice = true;
-                            }
-                            break;
-                        case 4:
-                            noOf4++;
-                            if (noOf4 == 2 && diceAppearedTwice)
-                            {
-                                int[] newArray = { 4, 4 };
-                                playerScore = RollThreeDie(newArray, user);
-                                diceAppearedTwice = true;
-                            }
-                            break;
-                        case 5:
-                            noOf5++;
-                            if (noOf5 == 2 && diceAppearedTwice == false)
-                            {
-                                int[] newArray = { 5, 5 };
-                                playerScore = RollThreeDie(newArray, user);
-                                diceAppearedTwice = true;
-                            }
-                            break;
-                        case 6:
-                            noOf6++;
-                            if (noOf6 == 2 && diceAppearedTwice == false)
-                            {
-                                int[] newArray = { 6, 6 };
-                                playerScore = RollThreeDie(newArray, user);
-                                diceAppearedTwice = true;
-                            }
-                            break;
-                    }
-                }
+                playerScore = RollThreeDie(listOfDiceValues, user);
             }
 
             return playerScore;
-        }
-
-        protected override void StartGame()
-        {
-            _amountOfRounds = 0;
-
-            if (base._isComputer)
-            {
-                while (_isWinner == false)
-                {
-                    Console.WriteLine("{0}, its your turn...", userName);
-                    _playerOneScore += RollFiveDie(userName);
-                    Console.WriteLine("{0} your current score is {1}", userName, _playerOneScore);
-
-                    if (_playerOneScore >= 20)
-                    {
-                        Console.WriteLine("Congrats {0}, you made it too {1}! You win!", userName, _playerOneScore);
-                        _isWinner = true;
-                        break;
-                    }
-
-                    Console.WriteLine("-------------------------------");
-
-                    _playerTwoScore += ComputerRollFiveDie(userName2);
-                    Console.WriteLine("{0} score is {1}", userName2, _playerTwoScore);
-
-                    if (_playerTwoScore >= 20)
-                    {
-                        Console.WriteLine("Congrats {0}, you made it too {1}! You win!", userName2, _playerTwoScore);
-                        _isWinner = true;
-                        break;
-                    }
-
-                    Console.WriteLine("-------------------------------");
-
-                }
-                _statistics.AddThreeOrMore();
-                _statistics.WorstThreeOrMore(_amountOfRounds);
-            }
-            else
-            {
-                while (_isWinner == false)
-                {
-                    Console.WriteLine("{0}, its your turn...", userName);
-                    _playerOneScore += RollFiveDie(userName);
-                    Console.WriteLine("{0} your current score is {1}", userName, _playerOneScore);
-
-                    if (_playerOneScore >= 20)
-                    {
-                        Console.WriteLine("Congrats {0}, you made it too {1}! You win!", userName, _playerOneScore);
-
-                        _isWinner = true;
-                        break;
-                    }
-
-                    Console.WriteLine("-------------------------------");
-
-                    Console.WriteLine("{0}, its your turn...", userName2);
-                    _playerTwoScore += RollFiveDie(userName2);
-                    Console.WriteLine("{0} your current score is {1}", userName2, _playerTwoScore);
-
-                    if (_playerTwoScore >= 20)
-                    {
-                        Console.WriteLine("Congrats {0}, you made it too {1}! You win!", userName2, _playerTwoScore);
-                        _isWinner = true;
-                        break;
-                    }
-
-                    Console.WriteLine("-------------------------------");
-
-                }
-                _statistics.AddThreeOrMore();
-                _statistics.WorstThreeOrMore(_amountOfRounds);
-            }
-
-            base.Menu();
         }
     }
 }
