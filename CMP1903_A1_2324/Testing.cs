@@ -11,7 +11,7 @@ namespace Dice_Game
     internal class Testing
     {
         private string _userName;
-        private string _filePathway = "TestingLog.txt";
+        private string _filePathway = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CMP1903_A1_2324/TestingLog.txt");
 
         private string[] _arrayOfLines;
 

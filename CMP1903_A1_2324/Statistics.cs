@@ -19,8 +19,8 @@ namespace Dice_Game
         private int _sevensOutBestGame;
         private int _totalGamesPlayed;
 
-        private string _filePathway = "GameHighScores.txt";
-        // private string _filePathway = AppDomain.CurrentDomain.BaseDirectory + @"\GameHighScores.txt";
+        private string _filePathway = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CMP1903_A1_2324/GameHighScores.txt");
+
 
         private string[] _arrayOfLines;
 
